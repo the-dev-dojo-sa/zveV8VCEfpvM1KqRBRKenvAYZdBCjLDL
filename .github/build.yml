@@ -1,0 +1,41 @@
+name: Build Installer
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Target OS"
+        required: true
+        type: string
+      version:
+        description: "App Version"
+        required: true
+        type: string
+      download_url:
+        description: "URL to download build files"
+        required: true
+        type: string
+      upload_url:
+        description: "URL to upload final installer"
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download build files
+        run: |
+          curl -o build.zip "${{ github.event.inputs.download_url }}"
+          unzip build.zip -d ./build
+
+      - name: Create installer
+        run: echo test > test.txt
+
+      - name: Upload installer
+        run: |
+          curl -X POST -F "file=@test.txt" "${{ github.event.inputs.upload_url }}"
