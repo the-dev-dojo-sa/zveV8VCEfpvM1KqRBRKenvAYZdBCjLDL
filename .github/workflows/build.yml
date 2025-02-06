@@ -3,19 +3,15 @@ name: Build Installer
 on:
   workflow_dispatch:
     inputs:
-      platform:
-        description: "Target OS"
+      runtime:
+        description: "Target runtime (linux-x64, etc.)"
         required: true
         type: string
-      version:
-        description: "App Version"
-        required: true
-        type: string
-      download_url:
+      src_url:
         description: "URL to download build files"
         required: true
         type: string
-      upload_url:
+      dst_url:
         description: "URL to upload final installer"
         required: true
         type: string
@@ -30,7 +26,7 @@ jobs:
 
       - name: Download build files
         run: |
-          curl -o build.zip "${{ github.event.inputs.download_url }}"
+          curl -o build.zip "${{ github.event.inputs.src_url }}"
           unzip build.zip -d ./build
 
       - name: Create installer
@@ -38,4 +34,5 @@ jobs:
 
       - name: Upload installer
         run: |
-          curl -X POST -F "file=@test.txt" "${{ github.event.inputs.upload_url }}"
+          curl -X POST -F "file=@test.txt" "${{ github.event.inputs.dst_url }}" \
+          -H 'Authorization: Basic ${{ secrets.NACHERT_API_KEY }}'
