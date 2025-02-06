@@ -30,9 +30,9 @@ jobs:
           unzip build.zip -d ./build
 
       - name: Create installer
-        run: echo test > test.txt
+        run: echo "Hey there, I am using WhatsApp" > test.txt
 
       - name: Upload installer
         run: |
-          curl -X POST -F "file=@test.txt" "${{ github.event.inputs.dst_url }}" \
+          curl -X POST -F "installer=@test.txt" "${{ github.event.inputs.dst_url }}" \
           -H 'Authorization: Basic ${{ secrets.NACHERT_API_KEY }}'
