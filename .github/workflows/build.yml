@@ -4,7 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       runtime:
-        description: "Target runtime (linux-x64, etc.)"
+        description: "Target runtime (e.g. linux-x64)"
+        required: true
+        type: string
+      version:
+        description: "Version (e.g. 0.0.1)"
         required: true
         type: string
       src_url:
