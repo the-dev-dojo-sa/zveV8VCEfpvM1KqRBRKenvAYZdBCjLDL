@@ -21,7 +21,7 @@ on:
         type: string
 
 jobs:
-  build-win-x64:
+  build-widows:
     if: startsWith(github.event.inputs.runtime, 'win-')
     runs-on: windows-latest
 
@@ -53,7 +53,7 @@ jobs:
               -Form @{ installer = Get-Item -Path 'Installers/win-x64/Nachert-setup.exe' } `
               -Headers @{ Authorization = "Basic ${{ secrets.NACHERT_API_KEY }}" }
 
-  build-linux-x64:
+  build-linux:
     if: startsWith(github.event.inputs.runtime, 'linux-')
     runs-on: ubuntu-latest
 
@@ -89,7 +89,7 @@ jobs:
           curl -X POST -F "installer=@Installers/linux-x64/debpkg.deb" "${{ github.event.inputs.dst_url }}" \
           -H 'Authorization: Basic ${{ secrets.NACHERT_API_KEY }}'
 
-  build-osx-x64:
+  build-macos:
     if: startsWith(github.event.inputs.runtime, 'osx-')
     runs-on: macos-latest
 
@@ -118,5 +118,5 @@ jobs:
 
       - name: Upload installer
         run: |
-          curl -X POST -F "installer=@Installers/linux-x64/debpkg.deb" "${{ github.event.inputs.dst_url }}" \
+          curl -X POST -F "installer=@Nachert.dmg" "${{ github.event.inputs.dst_url }}" \
           -H 'Authorization: Basic ${{ secrets.NACHERT_API_KEY }}'
