@@ -37,8 +37,9 @@ jobs:
       - name: Replace versions
         run: |
           $content = Get-Content -Path "Installers/win-x64/setup.iss" -Raw
-          $newContent = $content -replace "{AppVersion}", ${{ github.event.inputs.version }}
+          $newContent = $content -replace "{AppVersion}", "${{ github.event.inputs.version }}"
           Set-Content -Path "Installers/win-x64/setup.iss" -Value $newContent
+          type "Installers/win-x64/setup.iss"
 
       - name: Create installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
