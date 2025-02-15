@@ -49,8 +49,9 @@ jobs:
 
       - name: Upload installer
         run: |
-          curl -X POST -F "installer=@Installers/win-x64/Nachert-setup.exe" "${{ github.event.inputs.dst_url }}" \
-          -H 'Authorization: Basic ${{ secrets.NACHERT_API_KEY }}'
+          curl -Method POST -Uri ${{ github.event.inputs.dst_url }} `
+              -Form @{ installer = Get-Item -Path Installers/win-x64/Nachert-setup.exe } `
+              -Headers @{ Authorization = "Basic ${{ secrets.NACHERT_API_KEY }}" }
 
   build-linux-x64:
     if: github.event.inputs.runtime == 'linux-x64'
