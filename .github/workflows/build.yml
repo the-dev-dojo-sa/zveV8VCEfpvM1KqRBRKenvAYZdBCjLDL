@@ -99,8 +99,8 @@ jobs:
 
       - name: Replace versions
         run: |
-          sed -i "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/usr/share/applications/Nachert.desktop"
-          sed -i "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/DEBIAN/control"
+          sed -i '' "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/usr/share/applications/Nachert.desktop"
+          sed -i '' "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/DEBIAN/control"
 
       - name: Prepare package
         run: |
