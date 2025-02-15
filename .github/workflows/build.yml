@@ -22,7 +22,7 @@ on:
 
 jobs:
   build-win-x64:
-    if: github.event.inputs.runtime == 'win-x64'
+    if: startsWith(github.event.inputs.runtime, 'win-')
     runs-on: windows-latest
 
     steps:
@@ -54,7 +54,7 @@ jobs:
               -Headers @{ Authorization = "Basic ${{ secrets.NACHERT_API_KEY }}" }
 
   build-linux-x64:
-    if: github.event.inputs.runtime == 'linux-x64'
+    if: startsWith(github.event.inputs.runtime, 'linux-')
     runs-on: ubuntu-latest
 
     steps:
@@ -71,6 +71,11 @@ jobs:
           sed -i "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/usr/share/applications/Nachert.desktop"
           sed -i "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/DEBIAN/control"
 
+      - name: Set arm-64 architecture
+        if: endsWith(github.event.inputs.runtime, '-arm64')
+        run: |
+          sed -i "s/amd64/arm64/g" "Installers/linux-x64/debpkg/DEBIAN/control"
+
       - name: Build deb package
         run: |
           cp -r build Installers/linux-x64/debpkg/opt/TheDevDojo/Nachert
@@ -85,7 +90,7 @@ jobs:
           -H 'Authorization: Basic ${{ secrets.NACHERT_API_KEY }}'
 
   build-osx-x64:
-    if: github.event.inputs.runtime == 'osx-x64'
+    if: startsWith(github.event.inputs.runtime, 'osx-')
     runs-on: macos-latest
 
     steps:
@@ -95,17 +100,14 @@ jobs:
       - name: Download build files
         run: |
           curl -o build.zip "${{ github.event.inputs.src_url }}"
-          unzip build.zip -d ./build
+          unzip build.zip -d Installers/mac-x64/Nachert.app/Contents/MacOS
 
       - name: Replace versions
         run: |
-          sed -i '' "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/usr/share/applications/Nachert.desktop"
-          sed -i '' "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/DEBIAN/control"
+          sed -i '' "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/mac-x64/Nachert.app/Contents/info.plist"
 
-      - name: Prepare package
+      - name: Sign code
         run: |
-          cp -r build Installers/mac-x64/Nachert.app/Contents
-          mv Installers/mac-x64/Nachert.app/Contents/osx-x64 Installers/mac-x64/Nachert.app/Contents/MacOS
           codesign --force --timestamp --deep --entitlements Installers/mac-x64/NachertEntitlements.entitlements --sign - Installers/mac-x64/Nachert.app
           
       - name: Create installer
