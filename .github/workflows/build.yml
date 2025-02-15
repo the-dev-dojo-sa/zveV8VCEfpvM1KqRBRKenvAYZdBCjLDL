@@ -86,7 +86,7 @@ jobs:
 
   build-osx-x64:
     if: github.event.inputs.runtime == 'osx-x64'
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Check out repository
@@ -97,10 +97,24 @@ jobs:
           curl -o build.zip "${{ github.event.inputs.src_url }}"
           unzip build.zip -d ./build
 
+      - name: Replace versions
+        run: |
+          sed -i "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/usr/share/applications/Nachert.desktop"
+          sed -i "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/DEBIAN/control"
+
+      - name: Prepare package
+        run: |
+          cp -r build Installers/mac-x64/Nachert.app/Contents
+          mv Installers/mac-x64/Nachert.app/Contents/osx-x64 Installers/mac-x64/Nachert.app/Contents/MacOS
+          codesign --force --timestamp --deep --entitlements Installers/mac-x64/NachertEntitlements.entitlements --sign - Installers/mac-x64/Nachert.app
+          
       - name: Create installer
-        run: echo "Hey there, I am using WhatsApp" > test.txt
+        uses: QQxiaoming/create-dmg-action@v0.0.2
+        with:
+          name: Nachert
+          srcdir: Installers/mac-x64/Nachert.app
 
       - name: Upload installer
         run: |
-          curl -X POST -F "installer=@test.txt" "${{ github.event.inputs.dst_url }}" \
+          curl -X POST -F "installer=@Installers/linux-x64/debpkg.deb" "${{ github.event.inputs.dst_url }}" \
           -H 'Authorization: Basic ${{ secrets.NACHERT_API_KEY }}'
