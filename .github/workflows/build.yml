@@ -39,6 +39,7 @@ jobs:
           $content = Get-Content -Path "Installers/win-x64/setup.iss" -Raw
           $newContent = $content -replace "{AppVersion}", $version
           Set-Content -Path "Installers/win-x64/setup.iss" -Value $newContent
+          type "Installers/win-x64/setup.iss"
 
       - name: Create installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
