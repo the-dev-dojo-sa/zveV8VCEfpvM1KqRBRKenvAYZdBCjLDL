@@ -23,7 +23,7 @@ on:
 jobs:
   build-win-x64:
     if: github.event.inputs.runtime == 'win-x64'
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Check out repository
@@ -32,14 +32,23 @@ jobs:
       - name: Download build files
         run: |
           curl -o build.zip "${{ github.event.inputs.src_url }}"
-          unzip build.zip -d ./build
+          Expand-Archive -Path build.zip -DestinationPath ./build
+
+      - name: Replace versions
+        run: |
+          $content = Get-Content -Path "Installers/win-x64/setup.iss" -Raw
+          $newContent = $content -replace "{AppVersion}", $version
+          Set-Content -Path "Installers/win-x64/setup.iss" -Value $newContent
 
       - name: Create installer
-        run: echo "Hey there, I am using WhatsApp" > test.txt
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: Installers/win-x64/setup.iss
+          options: /O+
 
       - name: Upload installer
         run: |
-          curl -X POST -F "installer=@test.txt" "${{ github.event.inputs.dst_url }}" \
+          curl -X POST -F "installer=@Installers/win-x64/Nachert-setup.exe" "${{ github.event.inputs.dst_url }}" \
           -H 'Authorization: Basic ${{ secrets.NACHERT_API_KEY }}'
 
   build-linux-x64:
