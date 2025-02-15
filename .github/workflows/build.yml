@@ -22,7 +22,7 @@ on:
 
 jobs:
   build-win-x64:
-    if: runtime == 'win-x64'
+    if: github.event.inputs.runtime == 'win-x64'
     runs-on: ubuntu-latest
 
     steps:
@@ -43,7 +43,7 @@ jobs:
           -H 'Authorization: Basic ${{ secrets.NACHERT_API_KEY }}'
 
   build-linux-x64:
-    if: runtime == 'linux-x64'
+    if: github.event.inputs.runtime == 'linux-x64'
     runs-on: ubuntu-latest
 
     steps:
@@ -57,8 +57,8 @@ jobs:
 
       - name: Replace versions
         run: |
-          sed -i "s/{AppVersion}/${{ version }}/g" "Installers/linux-x64/debpkg/usr/share/applications/Nachert.desktop"
-          sed -i "s/{AppVersion}/${{ version }}/g" "Installers/linux-x64/debpkg/DEBIAN/control"
+          sed -i "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/usr/share/applications/Nachert.desktop"
+          sed -i "s/{AppVersion}/${{ github.event.inputs.version }}/g" "Installers/linux-x64/debpkg/DEBIAN/control"
 
       - name: Build deb package
         run: |
@@ -74,7 +74,7 @@ jobs:
           -H 'Authorization: Basic ${{ secrets.NACHERT_API_KEY }}'
 
   build-osx-x64:
-    if: runtime == 'osx-x64'
+    if: github.event.inputs.runtime == 'osx-x64'
     runs-on: ubuntu-latest
 
     steps:
