@@ -1,0 +1,8 @@
+Package: nachert
+Version: {AppVersion}
+Architecture: amd64
+Maintainer: TheDevDojo
+Pre-Depends: dpkg (>= 1.14.0)
+Section: development
+Priority: optional
+Description: Начерт - удобная платформа для решения задач начертательной геометрии

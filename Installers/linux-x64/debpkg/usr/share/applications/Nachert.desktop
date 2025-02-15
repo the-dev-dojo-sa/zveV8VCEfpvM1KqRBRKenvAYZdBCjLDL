@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Nachert
+Version={AppVersion}
+Comment=Начерт - удобная платформа для решения задач начертательной геометрии
+Exec=/opt/TheDevDojo/Nachert/Nachert.App %U
+Icon=thedevdojo-nachert
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Development;
+MimeType=application/x-nachert-file;
